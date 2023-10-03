@@ -30,6 +30,7 @@ def create_cart(new_cart: NewCart):
 @router.get("/{cart_id}")
 def get_cart(cart_id: int):
     """ """
+    global carts
     return {carts[cart_id]}
 
 
@@ -40,6 +41,7 @@ class CartItem(BaseModel):
 @router.post("/{cart_id}/items/{item_sku}")
 def set_item_quantity(cart_id: int, item_sku: str, cart_item: CartItem):
     """ """
+    global carts
     cart = carts[cart_id]
     cart[item_sku] = cart_item.quantity
 
@@ -52,6 +54,7 @@ class CartCheckout(BaseModel):
 @router.post("/{cart_id}/checkout")
 def checkout(cart_id: int, cart_checkout: CartCheckout):
     """ """
+    global carts
     cart = carts[cart_id]
     tot_pots = 0
     for item_sku in cart:
