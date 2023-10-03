@@ -31,7 +31,7 @@ def create_cart(new_cart: NewCart):
 def get_cart(cart_id: int):
     """ """
     global carts
-    return {carts[cart_id]}
+    return carts[cart_id]
 
 
 class CartItem(BaseModel):
