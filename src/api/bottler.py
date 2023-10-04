@@ -19,15 +19,15 @@ class PotionInventory(BaseModel):
 def post_deliver_bottles(potions_delivered: list[PotionInventory]):
     """ """
     for potion in potions_delivered:
-        if(potion.potion_type[0] == 100):
+        if((potion.potion_type)[0] == 100):
             with db.engine.begin() as connection:
                 connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_ml = num_red_ml - " + potion.quantity * 100))
                 connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_potions = num_red_potions + " + potion.quantity))
-        if(potion.potion_type[1] == 100):
+        if((potion.potion_type)[1] == 100):
             with db.engine.begin() as connection:
                 connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_green_ml = num_green_ml - " + potion.quantity * 100))
                 connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_green_potions = num_green_potions + " + potion.quantity))
-        if(potion.potion_type[2] == 100):
+        if((potion.potion_type)[2] == 100):
             with db.engine.begin() as connection:
                 connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_blue_ml = num_blue_ml - " + potion.quantity * 100))
                 connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_blue_potions = num_blue_potions + " + potion.quantity))
