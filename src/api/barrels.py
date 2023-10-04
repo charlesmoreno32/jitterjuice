@@ -26,7 +26,6 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
         if(barrel.sku == "SMALL_RED_BARREL"):
             with db.engine.begin() as connection:
                 connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_ml = num_red_ml + " + barrel.ml_per_barrel))
-            with db.engine.begin() as connection:    
                 connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = gold - " + barrel.price))
 
     return "OK"
