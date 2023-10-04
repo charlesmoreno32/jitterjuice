@@ -52,11 +52,6 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     num_blue = 0
     times = 0
     plan = []
-    
-    for barrel in wholesale_catalog:
-        if(barrel.sku == "SMALL_RED_BARREL"):
-            price = barrel.price
-            break
 
     while(curr_gold > 0 and times < 5):
         for barrel in wholesale_catalog:
@@ -73,8 +68,6 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
                     curr_gold -= barrel.price
                     num_blue += 1
                     break
-            
-
 
     if(num_red > 0):
         plan.append(
