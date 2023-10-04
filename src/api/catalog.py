@@ -13,10 +13,8 @@ def get_catalog():
 
     # Can return a max of 20 items.
 
-    # write database query to ask how many red potions I have and fill in num-red_potions
-
     with db.engine.begin() as connection:
-        result = connection.execute(sqlalchemy.text("SELECT num_red_potions FROM global_inventory"))
+        result = connection.execute(sqlalchemy.text("SELECT num_red_potions, num_green_potions, num_blue_potions FROM global_inventory"))
     first_row = result.first()
 
     return [
@@ -28,17 +26,17 @@ def get_catalog():
                 "potion_type": [100, 0, 0, 0],
             },
             {
-                "sku": "RED_POTION_0",
+                "sku": "GREEN_POTION_0",
                 "name": "green potion",
                 "quantity": first_row.num_green_potions,
                 "price": 50,
                 "potion_type": [0, 100, 0, 0],
             },
             {
-                "sku": "RED_POTION_0",
-                "name": "red potion",
+                "sku": "BLUE_POTION_0",
+                "name": "blue potion",
                 "quantity": first_row.num_blue_potions,
                 "price": 50,
-                "potion_type": [0, 100, 0, 0],
+                "potion_type": [0, 0, 100, 0],
             }
         ]

@@ -56,12 +56,24 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
     """ """
     global carts
     cart = carts[cart_id]
-    tot_pots = 0
+    num_red = 0
+    num_green = 0
+    num_blue = 0
     for item_sku in cart:
         if(item_sku == "RED_POTION_0"):
-            tot_pots += cart[item_sku]
+            num_red += cart[item_sku]
             with db.engine.begin() as connection:
                 connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_potions = num_red_potions - " + cart[item_sku]))
-                connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = gold + " + tot_pots * 50))
-
+                connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = gold + " + num_red * 50))
+        elif(item_sku == "GREEN_POTION_0"):
+            num_red += cart[item_sku]
+            with db.engine.begin() as connection:
+                connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_potions = num_red_potions - " + cart[item_sku]))
+                connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = gold + " + num_red * 50))
+        elif(item_sku == "RED_POTION_0"):
+            num_red += cart[item_sku]
+            with db.engine.begin() as connection:
+                connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_potions = num_red_potions - " + cart[item_sku]))
+                connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = gold + " + num_red * 50))
+    tot_pots = num_red + num_green + num_blue
     return {"total_potions_bought": tot_pots, "total_gold_paid": tot_pots * 50}
