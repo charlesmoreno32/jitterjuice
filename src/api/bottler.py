@@ -38,7 +38,7 @@ def get_bottle_plan():
         result = connection.execute(sqlalchemy.text("SELECT num_red_ml FROM global_inventory"))
     first_row = result.first()
 
-    quantity = first_row.num_red_ml / 100
+    quantity = int(first_row.num_red_ml / 100)
    
     # Each bottle has a quantity of what proportion of red, blue, and
     # green potion to add.
