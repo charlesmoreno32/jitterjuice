@@ -25,16 +25,16 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
     for barrel in barrels_delivered:
         if(barrel.sku == "SMALL_RED_BARREL"):
             with db.engine.begin() as connection:
-                connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_ml = num_red_ml + " + barrel.ml_per_barrel * barrel.quantity))
-                connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = gold - " + barrel.price * barrel.quantity))
+                connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_ml = num_red_ml + " + str(barrel.ml_per_barrel * barrel.quantity)))
+                connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = gold - " + str(barrel.price * barrel.quantity)))
         elif(barrel.sku == "SMALL_GREEN_BARREL"):
             with db.engine.begin() as connection:
                 connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_green_ml = num_green_ml + " + barrel.ml_per_barrel * barrel.quantity))
-                connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = gold - " + barrel.price * barrel.quantity))
+                connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = gold - " + str(barrel.price * barrel.quantity)))
         elif(barrel.sku == "SMALL_BLUE_BARREL"):
             with db.engine.begin() as connection:
-                connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_blue_ml = num_blue_ml + " + barrel.ml_per_barrel * barrel.quantity))
-                connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = gold - " + barrel.price * barrel.quantity))
+                connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_blue_ml = num_blue_ml + " + str(barrel.ml_per_barrel * barrel.quantity)))
+                connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = gold - " + str(barrel.price * barrel.quantity)))
     return "OK"
 
 # Gets called once a day
