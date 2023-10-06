@@ -55,13 +55,13 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     while(curr_gold > 0):
         for barrel in wholesale_catalog:
             if(curr_gold >= barrel.price):
-                if(barrel.sku == "SMALL_RED_BARREL" and first_row.num_red_ml < barrel.ml_per_barrel and first_row.num_red_potions < barrel.ml_per_barrel / 100):
+                if(barrel.sku == "SMALL_RED_BARREL" and first_row.num_red_potions < first_row.num_green_potions*2 and first_row.num_red_potions < first_row.num_blue_potions*2):
                     curr_gold -= barrel.price
                     num_red += 1
-                elif(barrel.sku == "SMALL_GREEN_BARREL" and first_row.num_green_ml < barrel.ml_per_barrel and first_row.num_green_potions < barrel.ml_per_barrel / 100):
+                elif(barrel.sku == "SMALL_GREEN_BARREL" and first_row.num_green_potions < first_row.num_red_potions*2 and first_row.num_green_potions < first_row.num_blue_potions*2):
                     curr_gold -= barrel.price
                     num_green += 1
-                elif(barrel.sku == "SMALL_BLUE_BARREL" and first_row.num_blue_ml < barrel.ml_per_barrel and first_row.num_blue_potions < barrel.ml_per_barrel / 100):
+                elif(barrel.sku == "SMALL_BLUE_BARREL" and first_row.num_blue_potions < first_row.num_red_potions*2 and first_row.num_blue_potions < first_row.num_green_potions*2):
                     curr_gold -= barrel.price
                     num_blue += 1
 
