@@ -50,10 +50,9 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     num_red = 0
     num_green = 0
     num_blue = 0
-    times = 0
     plan = []
 
-    while(curr_gold > 0 and times < 5):
+    while(curr_gold > 0):
         for barrel in wholesale_catalog:
             if(curr_gold >= barrel.price):
                 if(barrel.sku == "SMALL_RED_BARREL" and first_row.num_red_ml < barrel.ml_per_barrel and first_row.num_red_potions < barrel.ml_per_barrel / 100):
