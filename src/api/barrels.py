@@ -51,7 +51,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     num_green = 0
     num_blue = 0
     plan = []
-    times = 10
+    times = 0
 
     while(curr_gold > 0 and times < 10):
         times += 1
