@@ -43,7 +43,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     """ """
     price = 0
     with db.engine.begin() as connection:
-        result = connection.execute(sqlalchemy.text("SELECT gold FROM global_inventory"))
+        result = connection.execute(sqlalchemy.text("SELECT * FROM global_inventory"))
     first_row = result.first()
 
     curr_gold = first_row.gold
@@ -56,13 +56,13 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     while(curr_gold > 0 and times < 5):
         for barrel in wholesale_catalog:
             if(curr_gold >= barrel.price):
-                if(barrel.sku == "SMALL_RED_BARREL" ):
+                if(barrel.sku == "SMALL_RED_BARREL" and first_row.num_red_ml < barrel.ml_per_barrel and first_row.num_red_potions < barrel.ml_per_barrel / 100):
                     curr_gold -= barrel.price
                     num_red += 1
-                elif(barrel.sku == "SMALL_GREEN_BARREL"):
+                elif(barrel.sku == "SMALL_GREEN_BARREL" and first_row.num_green_ml < barrel.ml_per_barrel and first_row.num_green_potions < barrel.ml_per_barrel / 100):
                     curr_gold -= barrel.price
                     num_green += 1
-                elif(barrel.sku == "SMALL_BLUE_BARREL"):
+                elif(barrel.sku == "SMALL_BLUE_BARREL" and first_row.num_blue_ml < barrel.ml_per_barrel and first_row.num_blue_potions < barrel.ml_per_barrel / 100):
                     curr_gold -= barrel.price
                     num_blue += 1
 
