@@ -12,26 +12,34 @@ def get_catalog():
     """
 
     # Can return a max of 20 items.
+    plan = []
 
     with db.engine.begin() as connection:
         result = connection.execute(sqlalchemy.text("SELECT num_red_potions, num_green_potions, num_blue_potions FROM global_inventory"))
     first_row = result.first()
 
-    return [
+    if(first_row.num_red_potions > 0):
+        plan.append(
             {
                 "sku": "RED_POTION_0",
                 "name": "red potion",
                 "quantity": first_row.num_red_potions,
                 "price": 50,
                 "potion_type": [100, 0, 0, 0],
-            },
+            }
+        )
+    if(first_row.num_green_potions > 0):
+        plan.append(
             {
                 "sku": "GREEN_POTION_0",
                 "name": "green potion",
                 "quantity": first_row.num_green_potions,
                 "price": 50,
                 "potion_type": [0, 100, 0, 0],
-            },
+            }
+        )
+    if(first_row.num_blue_potions > 0):
+        plan.append(
             {
                 "sku": "BLUE_POTION_0",
                 "name": "blue potion",
@@ -39,4 +47,5 @@ def get_catalog():
                 "price": 50,
                 "potion_type": [0, 0, 100, 0],
             }
-        ]
+        )
+    return plan
