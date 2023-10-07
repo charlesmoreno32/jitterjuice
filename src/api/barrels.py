@@ -27,11 +27,11 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
             with db.engine.begin() as connection:
                 connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_ml = num_red_ml + " + str(barrel.ml_per_barrel * barrel.quantity)))
                 connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = gold - " + str(barrel.price * barrel.quantity)))
-        elif(barrel.sku == "SMALL_GREEN_BARREL"):
+        elif((barrel.potion_type)[1] == 100):
             with db.engine.begin() as connection:
                 connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_green_ml = num_green_ml + " + str(barrel.ml_per_barrel * barrel.quantity)))
                 connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = gold - " + str(barrel.price * barrel.quantity)))
-        elif(barrel.sku == "SMALL_BLUE_BARREL"):
+        elif((barrel.potion_type)[2] == 100):
             with db.engine.begin() as connection:
                 connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_blue_ml = num_blue_ml + " + str(barrel.ml_per_barrel * barrel.quantity)))
                 connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = gold - " + str(barrel.price * barrel.quantity)))
@@ -52,6 +52,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     num_blue = 0
     plan = []
     times = 0
+
 
     while(curr_gold > 0 and times < 10):
         times += 1
