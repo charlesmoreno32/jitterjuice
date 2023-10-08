@@ -54,7 +54,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     times = 0
 
 
-    while(curr_gold > 0 and times < 10):
+    while(curr_gold > 0 and times < 999):
         times += 1
         for barrel in wholesale_catalog:
             if(curr_gold >= barrel.price):
