@@ -16,7 +16,7 @@ def get_inventory():
     """ """
     with db.engine.begin() as connection:
         globals = connection.execute(sqlalchemy.text("SELECT * FROM globals"))
-        catalog = connection.execute(sqlalchemy.text("SELECT inventory FROM catalog"))
+        catalog = connection.execute(sqlalchemy.text("SELECT inventory FROM potions"))
 
     first_row = globals.first()
     tot_pots = 0

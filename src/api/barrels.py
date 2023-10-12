@@ -64,7 +64,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     price = 0
     with db.engine.begin() as connection:
         globals = connection.execute(sqlalchemy.text("SELECT gold FROM globals"))
-        catalog = connection.execute(sqlalchemy.text("SELECT * FROM catalog"))
+        catalog = connection.execute(sqlalchemy.text("SELECT * FROM potions"))
 
     first_row = globals.first()
 
