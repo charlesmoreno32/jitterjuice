@@ -84,7 +84,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
                     curr_gold -= barrel.price
                     num_red += 1
                     barrel.quantity -= 1
-                if(barrel.sku == "SMALL_GREEN_BARREL" and barrel.quantity > 0):
+                elif(barrel.sku == "SMALL_GREEN_BARREL" and barrel.quantity > 0):
                     curr_gold -= barrel.price
                     num_green += 1
                     barrel.quantity -= 1
