@@ -33,7 +33,7 @@ def post_deliver_bottles(potions_delivered: list[PotionInventory]):
                                 SET inventory = inventory + :new_pots
                                 WHERE type = :potion_type
                                 """),
-                [{"tot_pots": potion.quantity, "potion_type": potion.potion_type}]
+                [{"new_pots": potion.quantity, "potion_type": potion.potion_type}]
             )
         connection.execute(
             sqlalchemy.text("""
@@ -56,7 +56,7 @@ def get_bottle_plan():
     """
 
     with db.engine.begin() as connection:
-        result = connection.execute(sqlalchemy.text("SELECT red_ml, green_ml, blue_ml, dark_ml FROM global_inventory"))
+        result = connection.execute(sqlalchemy.text("SELECT red_ml, green_ml, blue_ml, dark_ml FROM globals"))
     first_row = result.first()
     plan = []
     num_red = int(first_row.red_ml / 100)
