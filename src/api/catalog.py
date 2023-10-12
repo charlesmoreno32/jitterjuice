@@ -17,7 +17,7 @@ def get_catalog():
     with db.engine.begin() as connection:
         result = connection.execute(sqlalchemy.text("SELECT * FROM globals"))
     for row in result:
-        if(row.quantity > 0):
+        if(row.inventory > 0):
             catalog.append(
                 {
                     "sku": result.sku,
