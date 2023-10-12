@@ -20,7 +20,7 @@ def get_inventory():
 
     first_row = globals.first()
     tot_pots = 0
-    tot_ml = first_row.num_red_ml + first_row.num_green_ml + first_row.num_blue_ml + first_row.num_dark_ml
+    tot_ml = first_row.red_ml + first_row.green_ml + first_row.blue_ml + first_row.dark_ml
     for row in catalog:
         tot_pots += row.inventory    
     return {"number_of_potions": tot_pots, "ml_in_barrels": tot_ml, "gold": first_row.gold}
