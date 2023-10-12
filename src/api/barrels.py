@@ -22,29 +22,51 @@ class Barrel(BaseModel):
 @router.post("/deliver")
 def post_deliver_barrels(barrels_delivered: list[Barrel]):
     """ """
+    gold_paid = 0
+    red_ml = 0
+    green_ml = 0
+    blue_ml = 0
+    dark_ml = 0
     for barrel in barrels_delivered:
-        if(barrel.sku == "SMALL_RED_BARREL"):
-            with db.engine.begin() as connection:
-                connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_red_ml = num_red_ml + " + str(barrel.ml_per_barrel * barrel.quantity)))
-                connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = gold - " + str(barrel.price * barrel.quantity)))
-        elif((barrel.potion_type)[1] == 100):
-            with db.engine.begin() as connection:
-                connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_green_ml = num_green_ml + " + str(barrel.ml_per_barrel * barrel.quantity)))
-                connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = gold - " + str(barrel.price * barrel.quantity)))
-        elif((barrel.potion_type)[2] == 100):
-            with db.engine.begin() as connection:
-                connection.execute(sqlalchemy.text("UPDATE global_inventory SET num_blue_ml = num_blue_ml + " + str(barrel.ml_per_barrel * barrel.quantity)))
-                connection.execute(sqlalchemy.text("UPDATE global_inventory SET gold = gold - " + str(barrel.price * barrel.quantity)))
+        gold_paid += barrel.price + barrel.quantity
+        if(barrel.potion_type == [1,0,0,0]):
+            red_ml += barrel.ml_per_barrel * barrel.quantity
+        elif(barrel.potion_type == [0,1,0,0]):
+            green_ml += barrel.ml_per_barrel * barrel.quantity
+        elif(barrel.potion_type == [0,0,1,0]):
+            blue_ml += barrel.ml_per_barrel * barrel.quantity
+        elif(barrel.potion_type == [0,0,0,1]):
+            dark_ml += barrel.ml_per_barrel * barrel.quantity
+        else:
+            raise Exception('Invalid potion type')
+    
+    print(f"gold paid: {gold_paid} red_ml: {red_ml} blue_ml: {blue_ml} green_ml: {green_ml} dark_ml: {dark_ml}")
+    with db.engine.begin() as connection:
+        connection.execute(
+            sqlalchemy.text(
+                """
+                UPDATE globals SET
+                red_ml = red_ml + :red_ml,
+                green_ml = green_ml + :green_ml,
+                blue_ml = blue_ml + :blue_ml,
+                dark_ml = dark_ml + :dark_ml,
+                gold = gold - :gold_paid
+                """),
+            [{"red_ml": red_ml, "green_ml": green_ml, "blue_ml": blue_ml, "dark_ml": dark_ml, "gold_paid": gold_paid}]
+        )
     return "OK"
 
 # Gets called once a day
 @router.post("/plan")
 def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     """ """
+    print(wholesale_catalog)
     price = 0
     with db.engine.begin() as connection:
-        result = connection.execute(sqlalchemy.text("SELECT * FROM global_inventory"))
-    first_row = result.first()
+        globals = connection.execute(sqlalchemy.text("SELECT gold FROM globals"))
+        catalog = connection.execute(sqlalchemy.text("SELECT * FROM catalog"))
+
+    first_row = globals.first()
 
     curr_gold = first_row.gold
     num_red = 0
@@ -58,17 +80,17 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
         times += 1
         for barrel in wholesale_catalog:
             if(curr_gold >= barrel.price):
-                if(barrel.sku == "SMALL_GREEN_BARREL" and barrel.quantity > 0 and (first_row.num_green_potions == 0 or first_row.num_green_potions < (first_row.num_red_potions)*2 and first_row.num_green_potions < (first_row.num_blue_potions)*2)):
+                if(barrel.sku == "SMALL_RED_BARREL" and barrel.quantity > 0):
+                    curr_gold -= barrel.price
+                    num_red += 1
+                    barrel.quantity -= 1
+                if(barrel.sku == "SMALL_GREEN_BARREL" and barrel.quantity > 0):
                     curr_gold -= barrel.price
                     num_green += 1
                     barrel.quantity -= 1
-                elif(barrel.sku == "SMALL_BLUE_BARREL" and barrel.quantity > 0 and (first_row.num_blue_potions == 0 or first_row.num_blue_potions < (first_row.num_red_potions)*2 and first_row.num_blue_potions < (first_row.num_green_potions)*2)):
+                elif(barrel.sku == "SMALL_BLUE_BARREL" and barrel.quantity > 0):
                     curr_gold -= barrel.price
                     num_blue += 1
-                    barrel.quantity -= 1
-                elif(barrel.sku == "SMALL_RED_BARREL" and barrel.quantity > 0 and (first_row.num_red_potions == 0 or first_row.num_red_potions < (first_row.num_green_potions)*2 and first_row.num_red_potions < (first_row.num_blue_potions)*2)):
-                    curr_gold -= barrel.price
-                    num_red += 1
                     barrel.quantity -= 1
 
     if(num_red > 0):
