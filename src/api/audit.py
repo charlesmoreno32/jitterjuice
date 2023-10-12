@@ -15,10 +15,14 @@ router = APIRouter(
 def get_inventory():
     """ """
     with db.engine.begin() as connection:
-        result = connection.execute(sqlalchemy.text("SELECT * FROM global_inventory"))
-    first_row = result.first()
-    tot_pots = first_row.num_red_potions + first_row.num_green_potions + first_row.num_blue_potions
+        globals = connection.execute(sqlalchemy.text("SELECT * FROM globals"))
+        catalog = connection.execute(sqlalchemy.text("SELECT inventory FROM catalog"))
+
+    first_row = globals.first()
+    tot_pots = 0
     tot_ml = first_row.num_red_ml + first_row.num_green_ml + first_row.num_blue_ml
+    for row in catalog:
+        tot_pots += row.inventory    
     return {"number_of_potions": tot_pots, "ml_in_barrels": tot_ml, "gold": first_row.gold}
 
 class Result(BaseModel):
