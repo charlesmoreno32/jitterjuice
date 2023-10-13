@@ -71,21 +71,27 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     curr_gold = first_row.gold
     plan = []
     times = 0
+    quants = {}
+    for barrel in wholesale_catalog:
+        quants[barrel.sku] = 0
 
     
-    #while(curr_gold > 0 and times < 999):
-        #times += 1
+    while(curr_gold > 0 and times < 10):
+        times += 1
+        for barrel in wholesale_catalog:
+            if(curr_gold >= barrel.price):
+                if('SMALL' in barrel.sku):
+                        quants[barrel.sku] += 1
+                        curr_gold -= barrel.price
+                        barrel.quantity -= 1
+    
     for barrel in wholesale_catalog:
-        quan = 0
-        if(curr_gold >= barrel.price):
-            if('SMALL' in barrel.sku):
-                    curr_gold -= barrel.price
-                    barrel.quantity -= 1
-                    plan.append(
-                         {
-                              "sku": barrel.sku,
-                              "quantity": 1
-                         }
-                    )
+        if(quants[barrel.sku] != 0):
+            plan.append(
+                {
+                    "sku": barrel.sku,
+                    "quantity": quants[barrel.sku]
+                }
+            )
     
     return plan
