@@ -64,55 +64,28 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     price = 0
     with db.engine.begin() as connection:
         globals = connection.execute(sqlalchemy.text("SELECT gold FROM globals"))
-        catalog = connection.execute(sqlalchemy.text("SELECT * FROM potions"))
+        potions = connection.execute(sqlalchemy.text("SELECT * FROM potions"))
 
     first_row = globals.first()
 
     curr_gold = first_row.gold
-    num_red = 0
-    num_green = 0
-    num_blue = 0
     plan = []
     times = 0
 
-
-    while(curr_gold > 0 and times < 999):
-        times += 1
-        for barrel in wholesale_catalog:
-            if(curr_gold >= barrel.price):
-                if(barrel.sku == "SMALL_RED_BARREL" and barrel.quantity > 0):
+    
+    #while(curr_gold > 0 and times < 999):
+        #times += 1
+    for barrel in wholesale_catalog:
+        quan = 0
+        if(curr_gold >= barrel.price):
+            if('SMALL' in barrel.sku):
                     curr_gold -= barrel.price
-                    num_red += 1
                     barrel.quantity -= 1
-                elif(barrel.sku == "SMALL_GREEN_BARREL" and barrel.quantity > 0):
-                    curr_gold -= barrel.price
-                    num_green += 1
-                    barrel.quantity -= 1
-                elif(barrel.sku == "SMALL_BLUE_BARREL" and barrel.quantity > 0):
-                    curr_gold -= barrel.price
-                    num_blue += 1
-                    barrel.quantity -= 1
-
-    if(num_red > 0):
-        plan.append(
-            {
-                "sku": "SMALL_RED_BARREL",
-                "quantity": num_red,
-            }
-        )
-    if(num_green > 0):
-        plan.append(
-            {
-                "sku": "SMALL_GREEN_BARREL",
-                "quantity": num_green,
-            }
-        )
-    if(num_blue > 0):
-        plan.append(
-            {
-                "sku": "SMALL_BLUE_BARREL",
-                "quantity": num_blue,
-            }
-        )
+                    plan.append(
+                         {
+                              "sku": barrel.sku,
+                              "quantity": 1
+                         }
+                    )
     
     return plan

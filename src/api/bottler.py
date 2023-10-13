@@ -55,7 +55,7 @@ def get_bottle_plan():
     Go from barrel to bottle.
     """
     bottled = 0
-    #TOT BOTTLES <= 300
+    #TOT POTS HAS TO BE <= 300
     #to get potion id: 
     #SELECT id FROM potions WHERE sku = :item_sku
     #INSERT INTO cart items (cart_id, quantity, potion_id)
@@ -67,6 +67,7 @@ def get_bottle_plan():
     #FROM potions WHERE potions.sku = :item_sku
     with db.engine.begin() as connection:
         result = connection.execute(sqlalchemy.text("SELECT red_ml, green_ml, blue_ml, dark_ml FROM globals"))
+        inventory = connection.execute(sqlalchemy.text("SELECT SUM(inventory) FROM potions"))
     first_row = result.first()
     plan = []
     num_red = int(first_row.red_ml / 100)
