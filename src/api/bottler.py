@@ -68,34 +68,41 @@ def get_bottle_plan():
     with db.engine.begin() as connection:
         result = connection.execute(sqlalchemy.text("SELECT red_ml, green_ml, blue_ml, dark_ml FROM globals"))
         inventory = connection.execute(sqlalchemy.text("SELECT SUM(inventory) FROM potions"))
-    first_row = result.first()
+        potions = connection.execute(sqlalchemy.text("SELECT * FROM potions"))
+    start = potions
+    gl = result.first()
     plan = []
-    num_red = int(first_row.red_ml / 100)
-    num_green = int(first_row.green_ml / 100)
-    num_blue = int(first_row.blue_ml / 100)
-    num_dark = int(first_row.dark_ml / 100)
+    quants = {}
+    red_ml = gl.red_ml
+    green_ml = gl.green_ml
+    blue_ml = gl.blue_ml
+    dark_ml = gl.dark_ml
+    count = 0
+    for potion in potions:
+        count += 1
+        quants[potion.sku] = 0
+    while(inventory < 300 and count > 0):
+        count -= 1
+        potions = start
+        for potion in potions:
+            if(potion.potion_type[0] < red_ml and potion.potion_type[1] < green_ml and potion.potion_type[2] < blue_ml and potion.potion_type[3] < dark_ml):
+                red_ml -= potion.potion_type[0]
+                green_ml -= potion.potion_type[1]
+                blue_ml -= potion.potion_type[2]
+                dark_ml -= potion.potion_type[3]
+                quants[potion.sku] += 1
+
+
+    potions = start
+    for potion in potions:
+        if(quants[potion.sku] != 0):
+            plan.append(
+                {
+                    "potion_type": potion.potion_type,
+                    "quantity": quants[potion.sku],
+                }
+            )
     
-    if(num_red > 0):
-        plan.append(
-            {
-                "potion_type": [100, 0, 0, 0],
-                "quantity": num_red,
-            }
-        )
-    if(num_green > 0):
-        plan.append(
-            {
-                "potion_type": [0, 100, 0, 0],
-                "quantity": num_green,
-            }
-        )
-    if(num_blue > 0):
-        plan.append(
-            {
-                "potion_type": [0, 0, 100, 0],
-                "quantity": num_blue,
-            }
-        )
    
     # Each bottle has a quantity of what proportion of red, blue, and
     # green potion to add.

@@ -15,7 +15,7 @@ def get_catalog():
     catalog = []
 
     with db.engine.begin() as connection:
-        result = connection.execute(sqlalchemy.text("SELECT * FROM potions"))
+        result = connection.execute(sqlalchemy.text("SELECT * FROM potions∏"))
     for row in result:
         if(row.inventory > 0):
             catalog.append(
