@@ -28,7 +28,7 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
     blue_ml = 0
     dark_ml = 0
     for barrel in barrels_delivered:
-        gold_paid += barrel.price + barrel.quantity
+        gold_paid += barrel.price * barrel.quantity
         if(barrel.potion_type == [1,0,0,0]):
             red_ml += barrel.ml_per_barrel * barrel.quantity
         elif(barrel.potion_type == [0,1,0,0]):
