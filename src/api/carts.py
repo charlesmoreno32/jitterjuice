@@ -85,6 +85,6 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
                                             UPDATE globals
                                             SET gold = gold - :tot_price
                                             """),
-                                            [{"tot_price": item.quantity * 50}])
+                                            [{"tot_price": tot_pots * 50}])
     
     return {"total_potions_bought": tot_pots, "total_gold_paid": tot_pots * 50}
