@@ -20,10 +20,10 @@ def get_catalog():
         if(row.inventory > 0):
             catalog.append(
                 {
-                    "sku": result.sku,
-                    "name": result.sku,
-                    "quantity": result.inventory,
-                    "price": result.price,
+                    "sku": row.sku,
+                    "name": row.sku,
+                    "quantity": row.inventory,
+                    "price": row.price,
                     "potion_type": [row.red, row.green, row.blue, row.dark],
                 }
         )
