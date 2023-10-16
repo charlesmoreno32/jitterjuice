@@ -68,7 +68,7 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
                                            SET inventory = potions.inventory - cart_items.quantity
                                            FROM cart_items
                                            WHERE potions.id = cart_items.potion_id and cart_items.cart_id = :cart_id;
-                                           """ ), [{"cart_id": item.cart_id}])
+                                           """ ), [{"cart_id": cart_id}])
 
         start = cart
         for item in cart:
