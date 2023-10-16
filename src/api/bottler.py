@@ -54,7 +54,6 @@ def get_bottle_plan():
     """
     Go from barrel to bottle.
     """
-    bottled = 0
     #TOT POTS HAS TO BE <= 300
     #to get potion id: 
     #SELECT id FROM potions WHERE sku = :item_sku
@@ -65,7 +64,7 @@ def get_bottle_plan():
     #INSERT INTO cart_items (cart_id, quantity, catalog_id)
     #SELECT :cart_id, :quantity, potions.id
     #FROM potions WHERE potions.sku = :item_sku
-    with db.engine.begin() as connection:
+    """with db.engine.begin() as connection:
         result = connection.execute(sqlalchemy.text("SELECT red_ml, green_ml, blue_ml, dark_ml FROM globals"))
         inventory = connection.execute(sqlalchemy.text("SELECT SUM(inventory) FROM potions"))
         potions = connection.execute(sqlalchemy.text("SELECT * FROM potions"))
@@ -105,12 +104,12 @@ def get_bottle_plan():
                     "potion_type": potion.potion_type,
                     "quantity": quants[potion.sku],
                 }
-            )
-    
-   
-    # Each bottle has a quantity of what proportion of red, blue, and
-    # green potion to add.
-    # Expressed in integers from 1 to 100 that must sum up to 100.
-
-    # Initial logic: bottle all barrels into red potions.
+            )"""
+    plan = []
+    plan.append(
+        {
+            "potion_type": [100, 0, 0, 0],
+            "quantity": 5,
+        }
+    )
     return plan
