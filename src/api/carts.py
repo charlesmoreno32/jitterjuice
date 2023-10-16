@@ -21,7 +21,7 @@ def create_cart(new_cart: NewCart):
     """ """
     global cartid
     cartid += 1
-    customer_name = "" + cartid
+    customer_name = "" + str(cartid)
     carts[cartid] = {}
     with db.engine.begin() as connection:
         id = connection.execute(sqlalchemy.text("""
