@@ -86,5 +86,15 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
                                                 SET gold = gold - :tot_price
                                                 """),
                                                 [{"tot_price": item.quantity * 50}])
+        """connection.execute(sqlalchemy.text(""
+                                           DELETE FROM cart_items
+                                           WHERE cart_id = :cart_id
+                                           ""),
+                                           [{"cart_id": cart_id}])"""
+        connection.execute(sqlalchemy.text("""
+                                           DELETE FROM carts
+                                           WHERE cart_id = :cart_id
+                                           """),
+                                           [{"cart_id": cart_id}])
     
     return {"total_potions_bought": tot_pots, "total_gold_paid": tot_pots * 50}
