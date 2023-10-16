@@ -14,14 +14,9 @@ router = APIRouter(
 class NewCart(BaseModel):
     customer: str
 
-carts = {}
-cartid = 0
 @router.post("/")
 def create_cart(new_cart: NewCart):
     """ """
-    global cartid
-    cartid += 1
-    carts[cartid] = {}
     with db.engine.begin() as connection:
         id = connection.execute(sqlalchemy.text("""
                                                 INSERT INTO carts (customer_name)
@@ -49,12 +44,12 @@ class CartItem(BaseModel):
 def set_item_quantity(cart_id: int, item_sku: str, cart_item: CartItem):
     """ """
     with db.engine.begin() as connection:
-        cart = connection.execute(sqlalchemy.text(""""
-                                                  INSERT INTO cart_items (cart_id, quantity, potion_id) 
-                                                  SELECT :cart_id, :quantity, potions.id 
-                                                  FROM potions WHERE potions.sku = :item_sku
-                                                  """),
-                                                [{"cart_id": cart_id, "quantity": cart_item.quantity, "item_sku": item_sku}])
+        connection.execute(sqlalchemy.text(""""
+                                           INSERT INTO cart_items (cart_id, quantity, potion_id) 
+                                           SELECT :cart_id, :quantity, potions.id 
+                                           FROM potions WHERE potions.sku = :item_sku
+                                           """),
+                                        [{"cart_id": cart_id, "quantity": cart_item.quantity, "item_sku": item_sku}])
     return "OK"
 
 
@@ -64,8 +59,6 @@ class CartCheckout(BaseModel):
 @router.post("/{cart_id}/checkout")
 def checkout(cart_id: int, cart_checkout: CartCheckout):
     """ """
-    global carts
-    cart = carts[cart_id]
     tot_pots = 0
     tot_gold = 0
     with db.engine.begin() as connection:
