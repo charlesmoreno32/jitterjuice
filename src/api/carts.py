@@ -26,7 +26,7 @@ def create_cart(new_cart: NewCart):
     with db.engine.begin() as connection:
         id = connection.execute(sqlalchemy.text("""
                                                 INSERT INTO carts (customer_name)
-                                                SELECT (:customer_name)
+                                                VALUES (:customer_name)
                                                 RETURNING id
                                                 """),
                                                 [{"customer_name": customer_name}])
@@ -52,8 +52,8 @@ def set_item_quantity(cart_id: int, item_sku: str, cart_item: CartItem):
     with db.engine.begin() as connection:
         cart = connection.execute(sqlalchemy.text(""""
                                                   INSERT INTO cart_items (cart_id, quantity, potion_id) 
-                                                  SELECT :cart_id, :quantity, potion.id 
-                                                  FROM potions WHERE potion.sku = :item_sku
+                                                  SELECT :cart_id, :quantity, potions.id 
+                                                  FROM potions WHERE potions.sku = :item_sku
                                                   """),
                                                 [{"cart_id": cart_id, "quantity": cart_item.quantity, "item_sku": item_sku}])
     return "OK"
@@ -71,6 +71,7 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
     tot_gold = 0
     with db.engine.begin() as connection:
         cart = connection.execute(sqlalchemy.text("SELECT * FROM cart_items WHERE cart_id = :cart_id"), [{"cart_id": cart_id}])
+        
         start = cart
         for item in cart:
             tot_pots += item.quantity
