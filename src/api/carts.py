@@ -19,7 +19,10 @@ cartid = 0
 @router.post("/")
 def create_cart(new_cart: NewCart):
     """ """
+    global cartid
+    cartid += 1
     customer_name = "" + cartid
+    carts[cartid] = {}
     with db.engine.begin() as connection:
         id = connection.execute(sqlalchemy.text("""
                                                 INSERT INTO carts (customer_name)
@@ -27,9 +30,6 @@ def create_cart(new_cart: NewCart):
                                                 RETURNING id
                                                 """),
                                                 [{"customer_name": customer_name}])
-    global cartid
-    cartid += 1
-    carts[cartid] = {}
     return {'cart_id': id}
 
 
