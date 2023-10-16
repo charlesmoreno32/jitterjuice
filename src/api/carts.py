@@ -81,5 +81,10 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
                                                WHERE potions.id = cart_items.potion_id and cart_items.cart_id = :cart_id;
                                                """ ), [{"cart_id": item.cart_id}])
             #somehow do the gold transaction
+            connection.execute(sqlalchemy.text( """
+                                                UPDATE globals
+                                                SET gold = gold - :tot_price
+                                                """),
+                                                [{"tot_price": item.quantity * 50}])
     
     return {"total_potions_bought": tot_pots, "total_gold_paid": tot_pots * 50}
