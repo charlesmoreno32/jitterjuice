@@ -64,7 +64,7 @@ def get_bottle_plan():
     #INSERT INTO cart_items (cart_id, quantity, catalog_id)
     #SELECT :cart_id, :quantity, potions.id
     #FROM potions WHERE potions.sku = :item_sku
-    with db.engine.begin() as connection:
+    """with db.engine.begin() as connection:
         result = connection.execute(sqlalchemy.text("SELECT red_ml, green_ml, blue_ml, dark_ml FROM globals"))
         inventory = connection.execute(sqlalchemy.text("SELECT SUM(inventory) FROM potions"))
         potions = connection.execute(sqlalchemy.text("SELECT * FROM potions"))
@@ -104,6 +104,11 @@ def get_bottle_plan():
                     "potion_type": potion.potion_type,
                     "quantity": quants[potion.sku],
                 }
-            )
-    
+            )"""
+    plan = [
+            {
+                "potion_type": [100, 0, 0, 0],
+                "quantity": 5,
+            }
+            ]
     return plan
