@@ -62,7 +62,6 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
     tot_pots = 0
     tot_gold = 0
     with db.engine.begin() as connection:
-        cart = connection.execute(sqlalchemy.text("SELECT * FROM cart_items WHERE cart_id = :cart_id"), [{"cart_id": cart_id}])
         connection.execute(sqlalchemy.text("""
                                            UPDATE potions
                                            SET inventory = potions.inventory - cart_items.quantity
@@ -84,6 +83,10 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
                                                       WHERE cart_id = :cart_id
                                                       """),
                                                       [{"cart_id": cart_id}]).scalar_one()
+        connection.execute(sqlalchemy.text("""
+                                           UPDATE globals
+                                           SET gold = gold + :gold_paid
+                                           """ ), [{"gold_paid": tot_gold}])
 
     
     return {"total_potions_bought": tot_pots, "total_gold_paid": tot_gold}
