@@ -70,14 +70,20 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
                                            WHERE potions.id = cart_items.potion_id and cart_items.cart_id = :cart_id;
                                            """ ), [{"cart_id": cart_id}])
 
-        start = cart
-        for item in cart:
-            tot_pots += item.quantity
-            #somehow do the gold transaction
-        connection.execute(sqlalchemy.text( """
-                                            UPDATE globals
-                                            SET gold = gold - :tot_price
-                                            """),
-                                            [{"tot_price": tot_pots * 50}])
+        tot_pots = connection.execute(sqlalchemy.text("""
+                                                      SELECT SUM(quantity) AS tot_pots
+                                                      FROM cart_items
+                                                      JOIN potions ON potions.id = cart_items.potion_id
+                                                      WHERE cart_id = :cart_id
+                                                      """),
+                                                      [{"cart_id": cart_id}]).scalar_one()
+        tot_gold = connection.execute(sqlalchemy.text("""
+                                                      SELECT SUM(quantity*price) AS tot_gold
+                                                      FROM cart_items
+                                                      JOIN potions ON potions.id = cart_items.potion_id
+                                                      WHERE cart_id = :cart_id
+                                                      """),
+                                                      [{"cart_id": cart_id}]).scalar_one()
+
     
-    return {"total_potions_bought": tot_pots, "total_gold_paid": tot_pots * 50}
+    return {"total_potions_bought": tot_pots, "total_gold_paid": tot_gold}
