@@ -67,7 +67,7 @@ def get_bottle_plan():
     with db.engine.begin() as connection:
         result = connection.execute(sqlalchemy.text("SELECT red_ml, green_ml, blue_ml, dark_ml FROM globals"))
         potions = connection.execute(sqlalchemy.text("SELECT * FROM potions"))
-    start = potions
+    potion_lst = [pot for pot in potions]
     inventory = 0
     gl = result.first()
     plan = []
@@ -77,15 +77,15 @@ def get_bottle_plan():
     blue_ml = gl.blue_ml
     dark_ml = gl.dark_ml
     count = 0
-    for potion in potions:
+
+    for potion in potion_lst:
         count += 1
         inventory += potion.inventory
         quants[potion.sku] = 0
     times = 0
     while(inventory < 300 and times < count):
         times = 0
-        potions = start
-        for potion in potions:
+        for potion in potion_lst:
             if(inventory < 300 and potion.potion_type[0] < red_ml and potion.potion_type[1] < green_ml and potion.potion_type[2] < blue_ml and potion.potion_type[3] < dark_ml):
                 red_ml -= potion.potion_type[0]
                 green_ml -= potion.potion_type[1]
@@ -96,9 +96,7 @@ def get_bottle_plan():
             else:
                 times += 1
 
-
-    potions = start
-    for potion in potions:
+    for potion in potion_lst:
         if(quants[potion.sku] != 0):
             plan.append(
                 {
@@ -114,3 +112,4 @@ def get_bottle_plan():
             }
             ]"""
     return plan
+get_bottle_plan()
