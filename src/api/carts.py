@@ -72,7 +72,6 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
         tot_pots = connection.execute(sqlalchemy.text("""
                                                       SELECT SUM(quantity) AS tot_pots
                                                       FROM cart_items
-                                                      JOIN potions ON potions.id = cart_items.potion_id
                                                       WHERE cart_id = :cart_id
                                                       """),
                                                       [{"cart_id": cart_id}]).scalar_one()
