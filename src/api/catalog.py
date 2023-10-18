@@ -26,6 +26,6 @@ def get_catalog():
                     "price": row.price,
                     "potion_type": row.potion_type,
                 }
-        )
+            )
 
     return catalog
