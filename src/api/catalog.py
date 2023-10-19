@@ -29,4 +29,3 @@ def get_catalog():
             )
 
     return catalog
-get_catalog()
