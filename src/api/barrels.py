@@ -61,7 +61,7 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
 def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     """ """
     print(wholesale_catalog)
-    price = 0
+  
     with db.engine.begin() as connection:
         globals = connection.execute(sqlalchemy.text("SELECT gold FROM globals"))
 
@@ -79,7 +79,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
         times += 1
         for barrel in wholesale_catalog:
             if(curr_gold >= barrel.price):
-                if('LARGE' in barrel.sku or "DARK" in barrel.sku):
+                if('SMALL' in barrel.sku or "DARK" in barrel.sku):
                         quants[barrel.sku] += 1
                         curr_gold -= barrel.price
                         barrel.quantity -= 1
