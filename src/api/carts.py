@@ -68,6 +68,15 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
                                            FROM cart_items
                                            WHERE potions.id = cart_items.potion_id and cart_items.cart_id = :cart_id;
                                            """ ), [{"cart_id": cart_id}])
+        
+        connection.execute(sqlalchemy.text("""
+                                           INSERT INTO potion_ledger (potion_change, potion_id)
+                                           SELECT (-cart_items.quantity, cart_items.potion_id)
+                                           FROM cart_items
+                                           WHERE cart_items = :cart_id
+                                           """),
+                                        [{"cart_id": cart_id}])
+
 
         tot_pots = connection.execute(sqlalchemy.text("""
                                                       SELECT SUM(quantity) AS tot_pots
@@ -86,6 +95,11 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
                                            UPDATE globals
                                            SET gold = gold + :gold_paid
                                            """ ), [{"gold_paid": tot_gold}])
+        connection.execute(sqlalchemy.text("""
+                                           INSERT INTO gold_ledger (gold_change) 
+                                           VALUES (:gold_paid)
+                                           """),
+                                        [{"gold_paid": tot_gold}])
 
     
     return {"total_potions_bought": tot_pots, "total_gold_paid": tot_gold}

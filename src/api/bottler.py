@@ -35,6 +35,11 @@ def post_deliver_bottles(potions_delivered: list[PotionInventory]):
                                 """),
                 [{"new_pots": potion.quantity, "potion_type": potion.potion_type}]
             )
+            connection.execute(sqlalchemy.text("""
+                                           INSERT INTO potion_ledger (potion_change, potion_id)
+                                           VALUES (:potion_change, :potion_id)
+                                           """),
+                                        [{"potion_change": potion.quantity, "potion_id": potion.id}])
         connection.execute(
             sqlalchemy.text("""
                             UPDATE globals SET
@@ -45,6 +50,11 @@ def post_deliver_bottles(potions_delivered: list[PotionInventory]):
                             """),
             [{"red_ml": red_ml, "green_ml": green_ml, "blue_ml": blue_ml, "dark_ml": dark_ml}]
         )
+        connection.execute(sqlalchemy.text("""
+                                           INSERT INTO ml_ledger (red_ml_change, green_ml_change, blue_ml_change, dark_ml_change) 
+                                           VALUES (:red_ml, :green_ml, :blue_ml, :dark_ml)
+                                           """),
+                                        [{"red_ml": -red_ml, "green_ml": -green_ml,"blue_ml": -blue_ml,"dark_ml": -dark_ml}])
 
     return "OK"
 

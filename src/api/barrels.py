@@ -54,6 +54,16 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
                 """),
             [{"red_ml": red_ml, "green_ml": green_ml, "blue_ml": blue_ml, "dark_ml": dark_ml, "gold_paid": gold_paid}]
         )
+        connection.execute(sqlalchemy.text("""
+                                           INSERT INTO gold_ledger (gold_change) 
+                                           VALUES (:gold_paid)
+                                           """),
+                                        [{"gold_paid": -gold_paid}])
+        connection.execute(sqlalchemy.text("""
+                                           INSERT INTO ml_ledger (red_ml_change, green_ml_change, blue_ml_change, dark_ml_change) 
+                                           VALUES (:red_ml, :green_ml, :blue_ml, :dark_ml)
+                                           """),
+                                        [{"red_ml": red_ml, "green_ml": green_ml,"blue_ml": blue_ml,"dark_ml": dark_ml}])
     return "OK"
 
 # Gets called once a day
@@ -71,6 +81,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     plan = []
     times = 0
     quants = {}
+    lst = wholesale_catalog
     for barrel in wholesale_catalog:
         quants[barrel.sku] = 0
 
