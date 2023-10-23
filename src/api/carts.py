@@ -92,10 +92,6 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
                                                       """),
                                                       [{"cart_id": cart_id}]).scalar_one()
         connection.execute(sqlalchemy.text("""
-                                           UPDATE globals
-                                           SET gold = gold + :gold_paid
-                                           """ ), [{"gold_paid": tot_gold}])
-        connection.execute(sqlalchemy.text("""
                                            INSERT INTO gold_ledger (gold_change) 
                                            VALUES (:gold_paid)
                                            """),

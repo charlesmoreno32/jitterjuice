@@ -42,18 +42,6 @@ def post_deliver_barrels(barrels_delivered: list[Barrel]):
     
     print(f"gold paid: {gold_paid} red_ml: {red_ml} blue_ml: {blue_ml} green_ml: {green_ml} dark_ml: {dark_ml}")
     with db.engine.begin() as connection:
-        connection.execute(
-            sqlalchemy.text(
-                """
-                UPDATE globals SET
-                red_ml = red_ml + :red_ml,
-                green_ml = green_ml + :green_ml,
-                blue_ml = blue_ml + :blue_ml,
-                dark_ml = dark_ml + :dark_ml,
-                gold = gold - :gold_paid
-                """),
-            [{"red_ml": red_ml, "green_ml": green_ml, "blue_ml": blue_ml, "dark_ml": dark_ml, "gold_paid": gold_paid}]
-        )
         connection.execute(sqlalchemy.text("""
                                            INSERT INTO gold_ledger (gold_change) 
                                            VALUES (:gold_paid)
@@ -73,11 +61,12 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
     print(wholesale_catalog)
   
     with db.engine.begin() as connection:
-        globals = connection.execute(sqlalchemy.text("SELECT gold FROM globals"))
+        gold = connection.execute(sqlalchemy.text("""
+                                                  SELECT SUM(gold_change) AS gold
+                                                  FROM gold_ledger
+                                                  """)).scalar_one()
 
-    first_row = globals.first()
-
-    curr_gold = first_row.gold
+    curr_gold = gold
     plan = []
     times = 0
     quants = {}

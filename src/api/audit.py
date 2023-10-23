@@ -15,15 +15,33 @@ router = APIRouter(
 def get_inventory():
     """ """
     with db.engine.begin() as connection:
-        globals = connection.execute(sqlalchemy.text("SELECT * FROM globals"))
+        gold = connection.execute(sqlalchemy.text("""
+                                                  SELECT SUM(gold_change) AS gold
+                                                  FROM gold_ledger
+                                                  """)).scalar_one()
+        red = connection.execute(sqlalchemy.text("""
+                                                  SELECT SUM(red_ml_change) AS red
+                                                  FROM ml_ledger
+                                                  """)).scalar_one()
+        green = connection.execute(sqlalchemy.text("""
+                                                  SELECT SUM(green_ml_change) AS green
+                                                  FROM ml_ledger
+                                                  """)).scalar_one()
+        blue = connection.execute(sqlalchemy.text("""
+                                                  SELECT SUM(blue_ml_change) AS blue
+                                                  FROM ml_ledger
+                                                  """)).scalar_one()
+        dark = connection.execute(sqlalchemy.text("""
+                                                  SELECT SUM(dark_ml_change) AS dark
+                                                  FROM ml_ledger
+                                                  """)).scalar_one()
         catalog = connection.execute(sqlalchemy.text("SELECT inventory FROM potions"))
 
-    first_row = globals.first()
     tot_pots = 0
-    tot_ml = first_row.red_ml + first_row.green_ml + first_row.blue_ml + first_row.dark_ml
+    tot_ml = red + green + blue + dark
     for row in catalog:
         tot_pots += row.inventory    
-    return {"number_of_potions": tot_pots, "ml_in_barrels": tot_ml, "gold": first_row.gold}
+    return {"number_of_potions": tot_pots, "ml_in_barrels": tot_ml, "gold": gold}
 
 class Result(BaseModel):
     gold_match: bool

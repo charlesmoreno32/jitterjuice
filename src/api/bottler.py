@@ -42,16 +42,7 @@ def post_deliver_bottles(potions_delivered: list[PotionInventory]):
                                            WHERE potions.potion_type = :potion_type
                                            """),
                                         [{"potion_change": potion.quantity, "potion_type": potion.potion_type}])
-        connection.execute(
-            sqlalchemy.text("""
-                            UPDATE globals SET
-                            red_ml = red_ml - :red_ml,
-                            green_ml = green_ml - :green_ml,
-                            blue_ml = blue_ml - :blue_ml,
-                            dark_ml = dark_ml - :dark_ml
-                            """),
-            [{"red_ml": red_ml, "green_ml": green_ml, "blue_ml": blue_ml, "dark_ml": dark_ml}]
-        )
+            
         connection.execute(sqlalchemy.text("""
                                            INSERT INTO ml_ledger (red_ml_change, green_ml_change, blue_ml_change, dark_ml_change) 
                                            VALUES (:red_ml, :green_ml, :blue_ml, :dark_ml)
@@ -77,17 +68,27 @@ def get_bottle_plan():
     #SELECT :cart_id, :quantity, potions.id
     #FROM potions WHERE potions.sku = :item_sku
     with db.engine.begin() as connection:
-        result = connection.execute(sqlalchemy.text("SELECT red_ml, green_ml, blue_ml, dark_ml FROM globals"))
+        red_ml = connection.execute(sqlalchemy.text("""
+                                                  SELECT SUM(red_ml_change) AS red
+                                                  FROM ml_ledger
+                                                  """)).scalar_one()
+        green_ml = connection.execute(sqlalchemy.text("""
+                                                  SELECT SUM(green_ml_change) AS green
+                                                  FROM ml_ledger
+                                                  """)).scalar_one()
+        blue_ml = connection.execute(sqlalchemy.text("""
+                                                  SELECT SUM(blue_ml_change) AS blue
+                                                  FROM ml_ledger
+                                                  """)).scalar_one()
+        dark_ml = connection.execute(sqlalchemy.text("""
+                                                  SELECT SUM(dark_ml_change) AS dark
+                                                  FROM ml_ledger
+                                                  """)).scalar_one()
         potions = connection.execute(sqlalchemy.text("SELECT * FROM potions"))
     potion_lst = [pot for pot in potions]
     inventory = 0
-    gl = result.first()
     plan = []
     quants = {}
-    red_ml = gl.red_ml
-    green_ml = gl.green_ml
-    blue_ml = gl.blue_ml
-    dark_ml = gl.dark_ml
     count = 0
 
     for potion in potion_lst:

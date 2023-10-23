@@ -30,7 +30,7 @@ def reset():
                                            """))
         connection.execute(sqlalchemy.text("""
                                            INSERT INTO potions_ledger (potion_change, potion_id)
-                                           SELECT (0, potions.id)
+                                           SELECT 0, potions.id
                                            FROM potions
                                            GROUP BY potion_id
                                            """))
