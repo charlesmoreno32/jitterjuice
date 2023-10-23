@@ -38,7 +38,7 @@ def post_deliver_bottles(potions_delivered: list[PotionInventory]):
             connection.execute(sqlalchemy.text("""
                                            INSERT INTO potion_ledger (potion_change, potion_id)
                                            SELECT (:potion_change, potions.id)
-                                           JOIN potions ON potions.id = potion_ledger.potion_id
+                                           FROM potions
                                            WHERE potions.potion_type = :potion_type
                                            """),
                                         [{"potion_change": potion.quantity, "potion_type": potion.potion_type}])
