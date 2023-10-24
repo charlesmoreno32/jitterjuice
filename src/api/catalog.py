@@ -15,7 +15,8 @@ def get_catalog():
     catalog = []
 
     with db.engine.begin() as connection:
-        result = connection.execute(sqlalchemy.text("""SELECT sku, SUM(potion_ledger.potion_change) AS inventory, price, potion_type
+        result = connection.execute(sqlalchemy.text("""
+                                                     SELECT sku, SUM(potion_ledger.potion_change) AS inventory, price, potion_type
                                                      FROM potions
                                                      JOIN potion_ledger ON potion_ledger.potion_id = potions.id
                                                      GROUP BY potions.id

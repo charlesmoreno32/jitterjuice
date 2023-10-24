@@ -95,9 +95,9 @@ def get_bottle_plan():
     while(inventory < 300 and times < count):
         times = 0
         for potion in potion_lst:
-            quant = connection.execute(sqlalchemy.text("""SELECT SUM(potion_ledger.potion_change)
-                                                     FROM potions
-                                                     JOIN potion_ledger ON potion_ledger.potion_id = potions.id
+            quant = connection.execute(sqlalchemy.text("""SELECT SUM(potion_change)
+                                                     FROM potion_ledger
+                                                     JOIN potions ON potion_ledger.potion_id = potions.id
                                                      WHERE potions.potion_type = :potion_type
                                                      GROUP BY potions.id
                                                      """),
