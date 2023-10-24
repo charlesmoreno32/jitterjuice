@@ -76,26 +76,35 @@ def get_bottle_plan():
                                                   SELECT SUM(dark_ml_change) AS dark
                                                   FROM ml_ledger
                                                   """)).scalar_one()
-        potions = connection.execute(sqlalchemy.text("""SELECT potion_type, SUM(potion_ledger.potion_change) as inventory
+        inventory = connection.execute(sqlalchemy.text("""
+                                                      SELECT SUM(potion_change) AS inventory
+                                                      FROM potion_ledger
+                                                      """)).scalar_one()
+        potions = connection.execute(sqlalchemy.text("""SELECT potion_type, sku, SUM(potion_ledger.potion_change) as inventory
                                                      FROM potions
                                                      JOIN potion_ledger ON potion_ledger.potion_id = potions.id
                                                      GROUP BY potions.id
                                                      """)).all()
     potion_lst = [pot for pot in potions]
-    inventory = 0
     plan = []
     quants = {}
     count = 0
 
     for potion in potion_lst:
         count += 1
-        inventory += potion.inventory
         quants[potion.sku] = 0
     times = 0
     while(inventory < 300 and times < count):
         times = 0
         for potion in potion_lst:
-            if(inventory < 300 and quants[potion.sku] + potion.inventory < 40 and potion.potion_type[0] <= red_ml and potion.potion_type[1] <= green_ml and potion.potion_type[2] <= blue_ml and potion.potion_type[3] <= dark_ml):
+            quant = connection.execute(sqlalchemy.text("""SELECT SUM(potion_ledger.potion_change) as quant
+                                                     FROM potions
+                                                     JOIN potion_ledger ON potion_ledger.potion_id = potions.id
+                                                     WHERE potions.potion_type = :potion_type
+                                                     GROUP BY potions.id
+                                                     """),
+                                                     [{"potion_type": potion.potion_type}]).scalar_one()
+            if(inventory < 300 and quant + quants[potion.sku] < 40 and potion.potion_type[0] <= red_ml and potion.potion_type[1] <= green_ml and potion.potion_type[2] <= blue_ml and potion.potion_type[3] <= dark_ml):
                 red_ml -= potion.potion_type[0]
                 green_ml -= potion.potion_type[1]
                 blue_ml -= potion.potion_type[2]
