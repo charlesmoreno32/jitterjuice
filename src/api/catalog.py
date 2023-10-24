@@ -17,7 +17,14 @@ def get_catalog():
     with db.engine.begin() as connection:
         result = connection.execute(sqlalchemy.text("SELECT * FROM potions"))
     for row in result:
-        if(row.inventory > 0):
+        quant = connection.execute(sqlalchemy.text("""SELECT SUM(potion_ledger.potion_change) as quant
+                                                     FROM potions
+                                                     JOIN potion_ledger ON potion_ledger.potion_id = potions.id
+                                                     WHERE potions.potion_type = :potion_type
+                                                     GROUP BY potions.id
+                                                     """),
+                                                     [{"potion_type": potion.potion_type}]).scalar_one()
+        if(quant > 0):
             catalog.append(
                 {
                     "sku": row.sku,
