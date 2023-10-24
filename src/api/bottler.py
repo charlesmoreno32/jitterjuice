@@ -80,8 +80,10 @@ def get_bottle_plan():
                                                       SELECT SUM(potion_change)
                                                       FROM potion_ledger
                                                       """)).scalar_one()
-        potions = connection.execute(sqlalchemy.text("""SELECT potion_type, sku
+        potions = connection.execute(sqlalchemy.text("""SELECT potion_type, sku, SUM(potion_ledger.potion_change) as inventory
                                                      FROM potions
+                                                     JOIN potion_ledger ON potions.id = potion_ledger.potion_id
+                                                     GROUP BY potions.id
                                                      """)).all()
     potion_lst = [pot for pot in potions]
     plan = []
@@ -95,13 +97,7 @@ def get_bottle_plan():
     while(inventory < 300 and times < count):
         times = 0
         for potion in potion_lst:
-            quant = connection.execute(sqlalchemy.text("""SELECT SUM(potion_change)
-                                                     FROM potion_ledger
-                                                     JOIN potions ON potion_ledger.potion_id = potions.id
-                                                     WHERE potions.potion_type = :potion_type
-                                                     """),
-                                                     [{"potion_type": potion.potion_type}]).scalar_one()
-            if(inventory < 300 and quant + quants[potion.sku] < 40 and potion.potion_type[0] <= red_ml and potion.potion_type[1] <= green_ml and potion.potion_type[2] <= blue_ml and potion.potion_type[3] <= dark_ml):
+            if(inventory < 300 and potion.inventory + quants[potion.sku] < 40 and potion.potion_type[0] <= red_ml and potion.potion_type[1] <= green_ml and potion.potion_type[2] <= blue_ml and potion.potion_type[3] <= dark_ml):
                 red_ml -= potion.potion_type[0]
                 green_ml -= potion.potion_type[1]
                 blue_ml -= potion.potion_type[2]
