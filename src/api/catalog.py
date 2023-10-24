@@ -23,7 +23,7 @@ def get_catalog():
                                                      WHERE potions.potion_type = :potion_type
                                                      GROUP BY potions.id
                                                      """),
-                                                     [{"potion_type": potion.potion_type}]).scalar_one()
+                                                     [{"potion_type": row.potion_type}]).scalar_one()
         if(quant > 0):
             catalog.append(
                 {
