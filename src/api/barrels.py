@@ -65,7 +65,7 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
                                                   SELECT SUM(gold_change) AS gold
                                                   FROM gold_ledger
                                                   """)).scalar_one()
-    
+    print(gold)
     curr_gold = gold
     plan = []
     times = 0
