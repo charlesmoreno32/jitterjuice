@@ -62,10 +62,9 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
   
     with db.engine.begin() as connection:
         gold = connection.execute(sqlalchemy.text("""
-                                                  SELECT SUM(gold_change) AS gold
+                                                  SELECT SUM(gold_change)
                                                   FROM gold_ledger
                                                   """)).scalar_one()
-    print(gold)
     curr_gold = gold
     plan = []
     times = 0
