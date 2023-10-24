@@ -61,23 +61,23 @@ def get_bottle_plan():
     #FROM potions WHERE potions.sku = :item_sku
     with db.engine.begin() as connection:
         red_ml = connection.execute(sqlalchemy.text("""
-                                                  SELECT SUM(red_ml_change) AS red
+                                                  SELECT SUM(red_ml_change)
                                                   FROM ml_ledger
                                                   """)).scalar_one()
         green_ml = connection.execute(sqlalchemy.text("""
-                                                  SELECT SUM(green_ml_change) AS green
+                                                  SELECT SUM(green_ml_change)
                                                   FROM ml_ledger
                                                   """)).scalar_one()
         blue_ml = connection.execute(sqlalchemy.text("""
-                                                  SELECT SUM(blue_ml_change) AS blue
+                                                  SELECT SUM(blue_ml_change)
                                                   FROM ml_ledger
                                                   """)).scalar_one()
         dark_ml = connection.execute(sqlalchemy.text("""
-                                                  SELECT SUM(dark_ml_change) AS dark
+                                                  SELECT SUM(dark_ml_change)
                                                   FROM ml_ledger
                                                   """)).scalar_one()
         inventory = connection.execute(sqlalchemy.text("""
-                                                      SELECT SUM(potion_change) AS inventory
+                                                      SELECT SUM(potion_change)
                                                       FROM potion_ledger
                                                       """)).scalar_one()
         potions = connection.execute(sqlalchemy.text("""SELECT potion_type, sku
