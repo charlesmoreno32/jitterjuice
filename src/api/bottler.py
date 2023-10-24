@@ -27,14 +27,6 @@ def post_deliver_bottles(potions_delivered: list[PotionInventory]):
         dark_ml = sum(potion.quantity * potion.potion_type[3] for potion in potions_delivered)
 
         for potion in potions_delivered:
-            connection.execute(
-                sqlalchemy.text("""
-                                UPDATE potions
-                                SET inventory = inventory + :new_pots
-                                WHERE potion_type = :potion_type
-                                """),
-                [{"new_pots": potion.quantity, "potion_type": potion.potion_type}]
-            )
             connection.execute(sqlalchemy.text("""
                                            INSERT INTO potion_ledger (potion_change, potion_id)
                                            SELECT :potion_change, potions.id
