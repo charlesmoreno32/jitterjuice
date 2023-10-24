@@ -63,13 +63,6 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
     tot_gold = 0
     with db.engine.begin() as connection:
         connection.execute(sqlalchemy.text("""
-                                           UPDATE potions
-                                           SET inventory = potions.inventory - cart_items.quantity
-                                           FROM cart_items
-                                           WHERE potions.id = cart_items.potion_id and cart_items.cart_id = :cart_id;
-                                           """ ), [{"cart_id": cart_id}])
-        
-        connection.execute(sqlalchemy.text("""
                                            INSERT INTO potion_ledger (potion_change, potion_id)
                                            SELECT (cart_items.quantity * -1), cart_items.potion_id
                                            FROM cart_items

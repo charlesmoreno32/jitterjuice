@@ -84,7 +84,11 @@ def get_bottle_plan():
                                                   SELECT SUM(dark_ml_change) AS dark
                                                   FROM ml_ledger
                                                   """)).scalar_one()
-        potions = connection.execute(sqlalchemy.text("SELECT * FROM potions"))
+        potions = connection.execute(sqlalchemy.text("""SELECT potion_type, SUM(potion_ledger.potion_change) as inventory
+                                                     FROM potions
+                                                     JOIN potion_ledger ON potion_ledger.potion_id = potions.id
+                                                     GROUP BY potions.id
+                                                     """)).all()
     potion_lst = [pot for pot in potions]
     inventory = 0
     plan = []
