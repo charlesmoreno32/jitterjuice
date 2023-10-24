@@ -18,7 +18,6 @@ def get_catalog():
         result = connection.execute(sqlalchemy.text("""SELECT sku, SUM(potion_ledger.potion_change) AS inventory, price, potion_type
                                                      FROM potions
                                                      JOIN potion_ledger ON potion_ledger.potion_id = potions.id
-                                                     WHERE potions.potion_type = :potion_type
                                                      GROUP BY potions.id
                                                      """))
     for row in result:
