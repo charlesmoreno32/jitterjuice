@@ -99,7 +99,6 @@ def get_bottle_plan():
                                                      FROM potion_ledger
                                                      JOIN potions ON potion_ledger.potion_id = potions.id
                                                      WHERE potions.potion_type = :potion_type
-                                                     GROUP BY potions.id
                                                      """),
                                                      [{"potion_type": potion.potion_type}]).scalar_one()
             if(inventory < 300 and quant + quants[potion.sku] < 40 and potion.potion_type[0] <= red_ml and potion.potion_type[1] <= green_ml and potion.potion_type[2] <= blue_ml and potion.potion_type[3] <= dark_ml):
