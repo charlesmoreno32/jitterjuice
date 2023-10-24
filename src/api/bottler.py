@@ -80,10 +80,8 @@ def get_bottle_plan():
                                                       SELECT SUM(potion_change) AS inventory
                                                       FROM potion_ledger
                                                       """)).scalar_one()
-        potions = connection.execute(sqlalchemy.text("""SELECT potion_type, sku, SUM(potion_ledger.potion_change) as inventory
+        potions = connection.execute(sqlalchemy.text("""SELECT potion_type, sku
                                                      FROM potions
-                                                     JOIN potion_ledger ON potion_ledger.potion_id = potions.id
-                                                     GROUP BY potions.id
                                                      """)).all()
     potion_lst = [pot for pot in potions]
     plan = []
