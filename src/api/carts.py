@@ -59,18 +59,7 @@ class CartCheckout(BaseModel):
 @router.post("/{cart_id}/checkout")
 def checkout(cart_id: int, cart_checkout: CartCheckout):
     """ """
-    tot_pots = 0
-    tot_gold = 0
     with db.engine.begin() as connection:
-        connection.execute(sqlalchemy.text("""
-                                           INSERT INTO potion_ledger (potion_change, potion_id)
-                                           SELECT (cart_items.quantity * -1), cart_items.potion_id
-                                           FROM cart_items
-                                           WHERE cart_items.cart_id = :cart_id
-                                           """),
-                                        [{"cart_id": cart_id}])
-
-
         tot_pots = connection.execute(sqlalchemy.text("""
                                                       SELECT SUM(quantity) AS tot_pots
                                                       FROM cart_items
@@ -84,6 +73,13 @@ def checkout(cart_id: int, cart_checkout: CartCheckout):
                                                       WHERE cart_id = :cart_id
                                                       """),
                                                       [{"cart_id": cart_id}]).scalar_one()
+        connection.execute(sqlalchemy.text("""
+                                           INSERT INTO potion_ledger (potion_change, potion_id)
+                                           SELECT (cart_items.quantity * -1), cart_items.potion_id
+                                           FROM cart_items
+                                           WHERE cart_items.cart_id = :cart_id
+                                           """),
+                                        [{"cart_id": cart_id}])
         connection.execute(sqlalchemy.text("""
                                            INSERT INTO gold_ledger (gold_change) 
                                            VALUES (:gold_paid)

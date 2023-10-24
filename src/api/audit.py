@@ -40,7 +40,6 @@ def get_inventory():
                                                       FROM potion_ledger
                                                       """)).scalar_one()
 
-    tot_pots = 0
     tot_ml = red + green + blue + dark   
     return {"number_of_potions": tot_pots, "ml_in_barrels": tot_ml, "gold": gold}
 
