@@ -38,7 +38,7 @@ def get_inventory():
         tot_pots = connection.execute(sqlalchemy.text("""
                                                       SELECT SUM(potion_change) AS inventory
                                                       FROM potion_ledger
-                                                      """)).scaler_one()
+                                                      """)).scalar_one()
 
     tot_pots = 0
     tot_ml = red + green + blue + dark   
