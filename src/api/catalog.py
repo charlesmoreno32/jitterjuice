@@ -17,7 +17,7 @@ def get_catalog():
     with db.engine.begin() as connection:
         result = connection.execute(sqlalchemy.text("SELECT * FROM potions"))
     for row in result:
-        quant = connection.execute(sqlalchemy.text("""SELECT SUM(potion_ledger.potion_change) as quant
+        quant = connection.execute(sqlalchemy.text("""SELECT SUM(potion_ledger.potion_change)
                                                      FROM potions
                                                      JOIN potion_ledger ON potion_ledger.potion_id = potions.id
                                                      WHERE potions.potion_type = :potion_type
