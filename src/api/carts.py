@@ -90,7 +90,7 @@ def search_orders(
         .offset(search_page)
         .order_by(order_by)
     )
-    
+
     if customer_name != "":
         stmt = stmt.where(db.carts.c.customer_name.ilike(f"%{customer_name}%"))
     
@@ -115,7 +115,7 @@ def search_orders(
                 line_item_id += 1
             
     prev = str(search_page - 5) if search_page - 5 >= 0 else ""
-    next = str(search_page + 5) if search_page + 5 < result.first_row().tot_results else ""
+    next = str(search_page + 5) if search_page + 5 < len(result) else ""
 
     return {
         "previous": prev,
