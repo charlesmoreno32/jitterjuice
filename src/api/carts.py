@@ -89,6 +89,7 @@ def search_orders(
         .join(db.carts, db.carts.c.cart_id == db.cart_items.c.cart_id)
         .join(db.potions, db.potions.c.id == db.cart_items.c.potion_id)
         )
+        .group_by(db.carts.c.customer_name)
         .offset(search_page)
         .order_by(order_by)
     )
