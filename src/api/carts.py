@@ -53,19 +53,76 @@ def search_orders(
     Your results must be paginated, the max results you can return at any
     time is 5 total line items.
     """
+    results = []
+
+    if sort_col is search_sort_options.customer_name:
+        order_by = db.carts.c.customer_name
+    elif sort_col == search_sort_options.item_sku:
+        order_by = db.potions.c.sku
+    elif sort_col == search_sort_options.line_item_total:
+        order_by = db.cart_items.c.quantity
+    elif sort_col is search_sort_options.timestamp:
+        order_by = db.cart_items.c.created_at
+    else:
+        assert False
+         
+    if sort_order == search_sort_order.asc:
+        order_by = order_by.asc()
+    else:
+        order_by = order_by.desc()
+    
+    if(search_page == ""):
+        search_page = 0
+    else:
+        search_page = int(search_page)
+    
+    stmt = (
+        sqlalchemy.select(
+            db.carts.c.customer_name,
+            db.cart_items.c.cart_id,
+            db.potions.c.sku,
+            (db.cart_items.c.quantity * db.potion_catalog.c.price).label("total_price"),
+            db.cart_items.c.created_at,
+            sqlalchemy.func.count().label("tot_results")
+        )
+        .select_from(db.cart_items)
+        .join(db.carts, db.carts.c.cart_id == db.cart_items.c.cart_id)
+        .join(db.potions, db.potions.c.id == db.cart_items.c.potion_id)
+        .offset(search_page)
+        .order_by(order_by)
+    )
+    
+    if customer_name != "":
+        stmt = stmt.where(db.carts.c.customer_name.ilike(f"%{customer_name}%"))
+    
+    if potion_sku != "":
+        stmt = stmt.where(db.potions.c.sku.ilike(f"%{potion_sku}%"))
+
+    results = []
+    with db.engine.connect() as conn:
+        result = conn.execute(stmt)
+        line_item_id = 0
+        for row in result:
+            if(line_item_id < 5):
+                results.append(
+                    {
+                        "line_item_id": line_item_id,
+                        "item_sku": row.sku,
+                        "customer_name": row.customer_name,
+                        "line_item_total": row.total,
+                        "timestamp": row.created_at
+                    }
+                )
+                line_item_id += 1
+            
+    prev = str(search_page - 5) if search_page - 5 >= 0 else ""
+    next = str(search_page + 5) if search_page + 5 < stmt.first_row().tot_results else ""
+
 
     return {
-        "previous": "",
-        "next": "",
-        "results": [
-            {
-                "line_item_id": 1,
-                "item_sku": "1 oblivion potion",
-                "customer_name": "Scaramouche",
-                "line_item_total": 50,
-                "timestamp": "2021-01-01T00:00:00Z",
-            }
-        ],
+        "previous": prev,
+        "next": next,
+        "results": results
     }
 
 class NewCart(BaseModel):

@@ -65,23 +65,28 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
                                                   SELECT SUM(gold_change)
                                                   FROM gold_ledger
                                                   """)).scalar_one()
+        tot_pots = connection.execute(sqlalchemy.text("""
+                                                  SELECT SUM(potion_change)
+                                                  FROM potion_ledger
+                                                  """)).scalar_one()
     curr_gold = gold
     plan = []
     times = 0
     quants = {}
-    lst = wholesale_catalog
+    
     for barrel in wholesale_catalog:
         quants[barrel.sku] = 0
 
     
-    while(curr_gold > 0 and times < 10):
+    while(curr_gold > 99 and times < 5):
         times += 1
         for barrel in wholesale_catalog:
             if(curr_gold >= barrel.price):
-                if('LARGE' in barrel.sku or 'MEDIUM' in barrel.sku or "DARK" in barrel.sku):
+                if(tot_pots < 250 and 'LARGE' in barrel.sku or 'SMALL' in barrel.sku or "DARK" in barrel.sku):
                         quants[barrel.sku] += 1
                         curr_gold -= barrel.price
                         barrel.quantity -= 1
+                        tot_pots += 1
     
     for barrel in wholesale_catalog:
         if(quants[barrel.sku] != 0):
