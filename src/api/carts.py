@@ -81,7 +81,7 @@ def search_orders(
             db.carts.c.customer_name,
             db.cart_items.c.cart_id,
             db.potions.c.sku,
-            (db.cart_items.c.quantity * db.potion_catalog.c.price).label("total_price"),
+            (db.cart_items.c.quantity * db.potions.c.price).label("total_price"),
             db.cart_items.c.created_at,
             sqlalchemy.func.count().label("tot_results")
         )
@@ -118,7 +118,6 @@ def search_orders(
             
     prev = str(search_page - 5) if search_page - 5 >= 0 else ""
     next = str(search_page + 5) if search_page + 5 < result.first_row().tot_results else ""
-
 
     return {
         "previous": prev,
