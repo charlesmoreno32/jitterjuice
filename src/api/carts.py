@@ -106,7 +106,7 @@ def search_orders(
                 results.append(
                     {
                         "line_item_id": line_item_id,
-                        "item_sku": str(row.quantity) + row.sku,
+                        "item_sku": str(row.quantity) + " " + row.sku,
                         "customer_name": row.customer_name,
                         "line_item_total": row.total_price,
                         "timestamp": row.created_at
