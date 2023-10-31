@@ -109,14 +109,14 @@ def search_orders(
                         "line_item_id": line_item_id,
                         "item_sku": row.sku,
                         "customer_name": row.customer_name,
-                        "line_item_total": row.total,
+                        "line_item_total": row.total_price,
                         "timestamp": row.created_at
                     }
                 )
                 line_item_id += 1
             
     prev = str(search_page - 5) if search_page - 5 >= 0 else ""
-    next = str(search_page + 5) if search_page + 5 < stmt.first_row().tot_results else ""
+    next = str(search_page + 5) if search_page + 5 < result.first_row().tot_results else ""
 
 
     return {
