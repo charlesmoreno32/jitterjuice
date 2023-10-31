@@ -115,7 +115,7 @@ def search_orders(
                 line_item_id += 1
             
     prev = str(search_page - 5) if search_page - 5 >= 0 else ""
-    next = str(search_page + 5) if search_page + 5 < len(result) else ""
+    next = str(search_page + 5) if search_page + 5 < result.rowcount else ""
 
     return {
         "previous": prev,
