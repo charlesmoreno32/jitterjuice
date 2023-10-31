@@ -78,18 +78,17 @@ def search_orders(
     
     stmt = (
         sqlalchemy.select(
-            db.carts.c.customer_name,
-            db.cart_items.c.cart_id,
-            db.potions.c.sku,
+            db.carts.c.customer_name.label("customer_name"),
+            db.cart_items.c.cart_id.label("cart_id"),
+            db.potions.c.sku.label("sku"),
             (db.cart_items.c.quantity * db.potions.c.price).label("total_price"),
-            db.cart_items.c.created_at,
+            db.cart_items.c.created_at.label("created_at"),
             sqlalchemy.func.count().label("tot_results")
         )
         .select_from(db.cart_items
         .join(db.carts, db.carts.c.cart_id == db.cart_items.c.cart_id)
         .join(db.potions, db.potions.c.id == db.cart_items.c.potion_id)
         )
-        .group_by(db.carts.c.customer_name)
         .offset(search_page)
         .order_by(order_by)
     )
