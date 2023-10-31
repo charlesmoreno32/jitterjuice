@@ -83,8 +83,8 @@ def search_orders(
             db.potions.c.sku.label("sku"),
             (db.cart_items.c.quantity * db.potions.c.price).label("total_price"),
             db.cart_items.c.created_at.label("created_at"),
-            sqlalchemy.func.count().label("tot_results")
         )
+        .select_from(db.cart_items)
         .join(db.carts, db.carts.c.cart_id == db.cart_items.c.cart_id)
         .join(db.potions, db.potions.c.id == db.cart_items.c.potion_id)
         .offset(search_page)
