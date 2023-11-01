@@ -64,7 +64,7 @@ def search_orders(
     elif sort_col is search_sort_options.timestamp:
         order_by = db.cart_items.c.created_at
     else:
-        assert False
+        order_by = db.carts.c.customer_name
          
     if sort_order == search_sort_order.asc:
         order_by = order_by.asc()
@@ -100,9 +100,9 @@ def search_orders(
     results = []
     with db.engine.connect() as conn:
         result = conn.execute(stmt)
-        line_item_id = 0
+        line_item_id = search_page * 5
         for row in result:
-            if(line_item_id < 5):
+            if(line_item_id < search_page + 5):
                 results.append(
                     {
                         "line_item_id": line_item_id,
