@@ -102,7 +102,7 @@ def search_orders(
         result = conn.execute(stmt)
         line_item_id = search_page * 5
         for row in result:
-            if(line_item_id < search_page + 5):
+            if(line_item_id < (search_page * 5) + 5):
                 results.append(
                     {
                         "line_item_id": line_item_id,
