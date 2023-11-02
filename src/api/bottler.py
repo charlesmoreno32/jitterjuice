@@ -97,7 +97,13 @@ def get_bottle_plan():
     while(inventory < 300 and times < count):
         times = 0
         for potion in potion_lst:
-            if(inventory < 300 and potion.inventory + quants[potion.sku] < 40 and potion.potion_type[0] <= red_ml and potion.potion_type[1] <= green_ml and potion.potion_type[2] <= blue_ml and potion.potion_type[3] <= dark_ml):
+            inv = connection.execute(sqlalchemy.text("""
+                                                      SELECT SUM(potion_change)
+                                                      FROM potion_ledger
+                                                      WHERE potion_ledger.potion_id = :id
+                                                      """),
+                                                      [{"id":potion.id}]).scalar_one()
+            if(inventory < 300 and inv + quants[potion.sku] < 40 and potion.potion_type[0] <= red_ml and potion.potion_type[1] <= green_ml and potion.potion_type[2] <= blue_ml and potion.potion_type[3] <= dark_ml):
                 red_ml -= potion.potion_type[0]
                 green_ml -= potion.potion_type[1]
                 blue_ml -= potion.potion_type[2]

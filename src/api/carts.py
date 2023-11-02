@@ -64,7 +64,7 @@ def search_orders(
     elif sort_col is search_sort_options.timestamp:
         order_by = db.cart_items.c.created_at
     else:
-        order_by = db.carts.c.customer_name
+        assert False
          
     if sort_order == search_sort_order.asc:
         order_by = order_by.asc()
