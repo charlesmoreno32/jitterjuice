@@ -78,12 +78,11 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
         quants[barrel.sku] = 0
 
     
-    #while(curr_gold > 99 and times < 5):
-    if(False):
+    while(curr_gold > 99 and times < 5):
         times += 1
         for barrel in wholesale_catalog:
             if(curr_gold >= barrel.price):
-                if(tot_pots < 250 and 'LARGE' in barrel.sku or 'MEDIUM' in barrel.sku or "DARK" in barrel.sku):
+                if(tot_pots < 250 and "DARK" in barrel.sku):
                         quants[barrel.sku] += 1
                         curr_gold -= barrel.price
                         barrel.quantity -= 1
