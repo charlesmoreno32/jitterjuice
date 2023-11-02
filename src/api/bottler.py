@@ -80,7 +80,7 @@ def get_bottle_plan():
                                                       SELECT SUM(potion_change)
                                                       FROM potion_ledger
                                                       """)).scalar_one()
-        potions = connection.execute(sqlalchemy.text("""SELECT potion_type, sku, SUM(potion_ledger.potion_change) as inventory
+        potions = connection.execute(sqlalchemy.text("""SELECT id, potion_type, sku, SUM(potion_ledger.potion_change) as inventory
                                                      FROM potions
                                                      JOIN potion_ledger ON potions.id = potion_ledger.potion_id
                                                      GROUP BY potions.id
@@ -102,7 +102,7 @@ def get_bottle_plan():
                                                       FROM potion_ledger
                                                       WHERE potion_ledger.potion_id = :id
                                                       """),
-                                                      [{"id":potion.id}]).scalar_one()
+                                                      [{"id": potion.id}]).scalar_one()
             if(inventory < 300 and inv + quants[potion.sku] < 40 and potion.potion_type[0] <= red_ml and potion.potion_type[1] <= green_ml and potion.potion_type[2] <= blue_ml and potion.potion_type[3] <= dark_ml):
                 red_ml -= potion.potion_type[0]
                 green_ml -= potion.potion_type[1]
