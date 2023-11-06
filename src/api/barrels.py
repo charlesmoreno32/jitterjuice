@@ -97,6 +97,6 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
                         "quantity": quants[barrel.sku]
                     }
                 )
-                times += 1
+            times += 1
     
     return plan
