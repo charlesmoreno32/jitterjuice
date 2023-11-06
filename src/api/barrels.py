@@ -87,13 +87,16 @@ def get_wholesale_purchase_plan(wholesale_catalog: list[Barrel]):
                         curr_gold -= barrel.price
                         barrel.quantity -= 1
     
+    times = 0
     for barrel in wholesale_catalog:
         if(quants[barrel.sku] != 0):
-            plan.append(
-                {
-                    "sku": barrel.sku,
-                    "quantity": quants[barrel.sku]
-                }
-            )
+            if(times < 6):
+                plan.append(
+                    {
+                        "sku": barrel.sku,
+                        "quantity": quants[barrel.sku]
+                    }
+                )
+                times += 1
     
     return plan
