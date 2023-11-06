@@ -21,16 +21,19 @@ def get_catalog():
                                                      JOIN potion_ledger ON potion_ledger.potion_id = potions.id
                                                      GROUP BY potions.id
                                                      """))
+    times = 0
     for row in result:
         if(row.inventory > 0):
-            catalog.append(
-                {
-                    "sku": row.sku,
-                    "name": row.sku,
-                    "quantity": row.inventory,
-                    "price": row.price,
-                    "potion_type": row.potion_type,
-                }
-            )
+            if(times < 6):
+                catalog.append(
+                    {
+                        "sku": row.sku,
+                        "name": row.sku,
+                        "quantity": row.inventory,
+                        "price": row.price,
+                        "potion_type": row.potion_type,
+                    }
+                )
+            times += 1
 
     return catalog
